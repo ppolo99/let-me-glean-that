@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Let Me Glean That For You</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 <style>
@@ -29,6 +29,7 @@
   .btn-copy:hover { background: #5a4bd1; }
   .copied-toast { display: none; font-size: 0.85rem; color: #27ae60; font-weight: 600; align-self: center; }
   #animate-view { display: none; }
+  .anim-subtitle { margin-bottom: 2rem; }
   .anim-search-box { width: 100%; padding: 14px 48px 14px 44px; font-size: 1rem; border: 2px solid #ddd; border-radius: 12px; background: #fff; text-align: left; outline: none; caret-color: #6C5CE7; }
   .anim-search-box.typing { border-color: #6C5CE7; }
   #cursor-blink { display: inline-block; width: 2px; height: 1.1em; background: #6C5CE7; margin-left: 1px; vertical-align: text-bottom; animation: blink 0.7s step-end infinite; }
@@ -39,39 +40,41 @@
   #fake-cursor { display: none; position: fixed; width: 24px; height: 24px; z-index: 9999; pointer-events: none; transition: left 0.6s ease-in-out, top 0.6s ease-in-out; }
   #snark { display: none; margin-top: 2rem; padding: 16px 28px; background: #fff3cd; border: 2px solid #f0c36d; border-radius: 12px; font-size: 1.15rem; font-weight: 600; color: #856404; animation: fadeUp 0.5s ease; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .footer { position: fixed; bottom: 1rem; font-size: 0.75rem; color: #aaa; }
+  .footer { position: fixed; bottom: 1rem; font-size: 0.75rem; color: #767676; }
 </style>
 </head>
 <body>
+<main>
 <div id="create-view">
-  <div class="logo">Let Me <span>Glean</span> That For You</div>
+  <h1 class="logo">Let Me <span>Glean</span> That For You</h1>
   <p class="subtitle">For all those people who find it more convenient to bother you than to search Glean themselves.</p>
   <div class="search-box-wrapper">
     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Search icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input class="search-box" id="query-input" type="text" placeholder="Type a Glean search query..." autocomplete="off" maxlength="500" />
+    <input class="search-box" id="query-input" type="text" placeholder="Type a Glean search query..." autocomplete="off" maxlength="500" aria-label="Glean search query" />
   </div>
-  <button class="btn-primary" id="generate-btn">Generate Link</button>
+  <button type="button" class="btn-primary" id="generate-btn">Generate Link</button>
   <div id="link-output">
     <p class="label">Share this link with your colleague:</p>
-    <input id="generated-link" type="text" readonly />
+    <input id="generated-link" type="text" readonly aria-label="Generated shareable link" />
     <div class="copy-row">
-      <button class="btn-copy" id="copy-btn">Copy Link</button>
+      <button type="button" class="btn-copy" id="copy-btn">Copy Link</button>
       <span class="copied-toast" id="copied-toast">Copied!</span>
     </div>
   </div>
 </div>
 <div id="animate-view">
-  <div class="logo">Let Me <span>Glean</span> That For You</div>
-  <p class="subtitle" style="margin-bottom:2rem;">Just watch...</p>
+  <h1 class="logo">Let Me <span>Glean</span> That For You</h1>
+  <p class="subtitle anim-subtitle">Just watch...</p>
   <div class="search-box-wrapper">
     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Search icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <div class="anim-search-box" id="anim-text"><span id="cursor-blink"></span></div>
   </div>
-  <button class="anim-btn" id="anim-btn">Search Glean</button>
+  <button type="button" class="anim-btn" id="anim-btn">Search Glean</button>
   <div id="snark"></div>
 </div>
 <svg id="fake-cursor" viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M4 1 L4 18 L9 13 L15 22 L18 20 L12 12 L19 12 Z" fill="#333" stroke="#fff" stroke-width="1"/></svg>
-<div class="footer">LMGTFY, but for Glean</div>
+</main>
+<footer class="footer">LMGTFY, but for Glean</footer>
 <script>
 (function () {
   var SNARK_MESSAGES = ["Was that so hard?","You could've just searched Glean yourself...","See? Glean knows things. Try it sometime.","Magic, right? It's called a search bar.","Next time, maybe try this yourself first?","Glean: it's like asking a colleague, but faster."];
@@ -84,7 +87,7 @@
     var input=document.getElementById('query-input'),btn=document.getElementById('generate-btn'),linkOutput=document.getElementById('link-output'),linkField=document.getElementById('generated-link'),copyBtn=document.getElementById('copy-btn'),toast=document.getElementById('copied-toast');
     input.addEventListener('keydown',function(e){if(e.key==='Enter')btn.click();});
     btn.addEventListener('click',function(){var q=input.value.trim();if(!q){input.focus();return;}var url=window.location.origin+window.location.pathname+'?q='+encodeURIComponent(q);linkField.value=url;linkOutput.style.display='block';linkField.select();});
-    copyBtn.addEventListener('click',function(){navigator.clipboard.writeText(linkField.value).then(function(){toast.style.display='inline';setTimeout(function(){toast.style.display='none';},2000);});});
+    copyBtn.addEventListener('click',function(){navigator.clipboard.writeText(linkField.value).then(function(){toast.textContent='Copied!';toast.style.color='#27ae60';toast.style.display='inline';setTimeout(function(){toast.style.display='none';},2000);}).catch(function(){toast.textContent='Copy failed \u2014 select and copy manually';toast.style.color='#e74c3c';toast.style.display='inline';linkField.select();setTimeout(function(){toast.style.display='none';},3000);});});
   }
   function startAnimation(query) {
     document.getElementById('create-view').style.display='none';document.getElementById('animate-view').style.display='block';
